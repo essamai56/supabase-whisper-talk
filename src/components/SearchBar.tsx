@@ -61,7 +61,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
             <PopoverTrigger asChild>
               <Button
                 variant="outline"
-                className="w-full justify-start text-left font-normal"
+                className="w-full justify-start text-left font-normal text-foreground"
               >
                 <CalendarIcon className="mr-2 h-4 w-4" />
                 {checkIn ? (
@@ -78,6 +78,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
                 onSelect={setCheckIn}
                 initialFocus
                 locale={ptBR}
+                className="pointer-events-auto"
               />
             </PopoverContent>
           </Popover>
@@ -91,7 +92,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
             <PopoverTrigger asChild>
               <Button
                 variant="outline"
-                className="w-full justify-start text-left font-normal"
+                className="w-full justify-start text-left font-normal text-foreground"
               >
                 <CalendarIcon className="mr-2 h-4 w-4" />
                 {checkOut ? (
@@ -109,6 +110,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
                 initialFocus
                 disabled={(date) => date <= (checkIn || new Date())}
                 locale={ptBR}
+                className="pointer-events-auto"
               />
             </PopoverContent>
           </Popover>
@@ -119,7 +121,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
             Hóspedes
           </label>
           <Select value={guests} onValueChange={setGuests}>
-            <SelectTrigger>
+            <SelectTrigger className="text-foreground">
               <SelectValue placeholder="Selecione" />
             </SelectTrigger>
             <SelectContent>
