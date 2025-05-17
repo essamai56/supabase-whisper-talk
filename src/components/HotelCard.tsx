@@ -1,6 +1,6 @@
 
 import { Link } from 'react-router-dom';
-import { Bed, WifiIcon, Coffee, Car, AccessibleIcon, Phone } from 'lucide-react';
+import { Bed, WifiIcon, Coffee, Car, AccessibilityIcon, Phone } from 'lucide-react';
 
 interface HotelCardProps {
   id: string;
@@ -31,7 +31,7 @@ const HotelCard: React.FC<HotelCardProps> = ({
       case 'estacionamento':
         return <Car className="h-5 w-5 text-blue-600" />;
       case 'acesso para cadeirantes':
-        return <AccessibleIcon className="h-5 w-5 text-blue-600" />;
+        return <AccessibilityIcon className="h-5 w-5 text-blue-600" />;
       case 'recepção 24 horas':
         return <Phone className="h-5 w-5 text-blue-600" />;
       default:

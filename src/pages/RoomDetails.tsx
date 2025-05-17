@@ -21,35 +21,47 @@ const RoomDetails = () => {
     try {
       setLoading(true);
       
-      const { data, error } = await supabase
+      // Primeiro, buscar o quarto e o tipo de quarto
+      const { data: roomData, error: roomError } = await supabase
         .from('rooms')
         .select(`
           *,
           room_type:room_type_id (
             name, 
             description, 
-            max_occupancy,
-            room_amenities (
-              amenity:amenity_id (
-                name,
-                description,
-                icon
-              )
-            )
+            max_occupancy
           ),
           hotel:hotel_id (*)
         `)
         .eq('id', id)
         .single();
       
-      if (error) throw error;
+      if (roomError) throw roomError;
       
-      // Transform room type amenities data
-      const amenities = data.room_type.room_amenities.map((ra: any) => ra.amenity);
+      // Agora buscar as amenidades do tipo de quarto separadamente
+      const { data: amenitiesData, error: amenitiesError } = await supabase
+        .from('room_amenities')
+        .select(`
+          amenity:amenity_id (
+            name,
+            description,
+            icon
+          )
+        `)
+        .eq('room_type_id', roomData.room_type_id);
+      
+      if (amenitiesError) {
+        console.error("Erro ao buscar amenidades:", amenitiesError);
+        // Não lançar erro, apenas registrar, para que possamos continuar com os dados do quarto
+      }
+      
+      // Combinar os dados
+      const amenities = amenitiesData?.map((item: any) => item.amenity) || [];
+      
       setRoom({
-        ...data,
+        ...roomData,
         room_type: {
-          ...data.room_type,
+          ...roomData.room_type,
           amenities
         }
       });
@@ -122,14 +134,18 @@ const RoomDetails = () => {
                 <div>
                   <h3 className="font-medium text-gray-700 mb-2">Amenidades</h3>
                   <div className="grid grid-cols-2 gap-2">
-                    {room.room_type.amenities.map((amenity: any, index: number) => (
-                      <div key={index} className="flex items-center">
-                        <div className="h-6 w-6 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mr-2">
-                          <span className="text-xs">{amenity.icon?.substring(0, 1) || 'A'}</span>
+                    {room.room_type.amenities && room.room_type.amenities.length > 0 ? (
+                      room.room_type.amenities.map((amenity: any, index: number) => (
+                        <div key={index} className="flex items-center">
+                          <div className="h-6 w-6 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mr-2">
+                            <span className="text-xs">{amenity.icon?.substring(0, 1) || 'A'}</span>
+                          </div>
+                          <span>{amenity.name}</span>
                         </div>
-                        <span>{amenity.name}</span>
-                      </div>
-                    ))}
+                      ))
+                    ) : (
+                      <p className="text-gray-500">Nenhuma amenidade disponível</p>
+                    )}
                   </div>
                 </div>
               </div>
